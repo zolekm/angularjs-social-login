@@ -159,8 +159,10 @@ socialLogin.directive("gLogin", function($rootScope, social, socialLoginService)
 	        	scope.gauth.signIn().then(function(googleUser){
 	        		var profile = googleUser.getBasicProfile();
 	        		var idToken = googleUser.getAuthResponse().id_token
+					var access_token = googleUser.getAuthResponse().access_token
+					console.log(profile, idToken)
 	        		socialLoginService.setProvider("google");
-	        		$rootScope.$broadcast('event:social-sign-in-success', {token: idToken, name: profile.getName(), email: profile.getEmail(), uid: profile.getId(), provider: "google", imageUrl: profile.getImageUrl()});
+	        		$rootScope.$broadcast('event:social-sign-in-success', {access_token:access_token, token: idToken, name: profile.getName(), email: profile.getEmail(), uid: profile.getId(), provider: "google", imageUrl: profile.getImageUrl()});
 	        	}, function(err){
 	        		console.log(err);
 	        	})
@@ -180,7 +182,8 @@ socialLogin.directive("fbLogin", function($rootScope, fbService, social, socialL
 					if(res.status == "connected"){
 						fbService.getUserDetails().then(function(user){
 							socialLoginService.setProvider("facebook");
-							var userDetails = {name: user.name, email: user.email, uid: user.id, provider: "facebook", imageUrl: user.picture.data.url}
+							console.log(user);
+							var userDetails = {access_token: res.authResponse.accessToken, name: user.name, email: user.email, uid: user.id, provider: "facebook", imageUrl: user.picture.data.url}
 							$rootScope.$broadcast('event:social-sign-in-success', userDetails);
 						}, function(err){
 							console.log(err);
